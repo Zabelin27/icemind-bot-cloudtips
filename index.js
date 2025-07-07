@@ -1,28 +1,47 @@
 const TelegramBot = require('node-telegram-bot-api');
-const express = require('express');
-const bodyParser = require('body-parser');
 
-const token = '7642749455:AAGY8AWxrP0yhuc6Lprzs3j3Cp5QR1JRYRQ'; // твой токен
-const bot = new TelegramBot(token);
-const app = express();
+// Вставь сюда свой токен бота
+const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
 
-app.use(bodyParser.json());
-
-// Webhook для Telegram
-app.post(`/bot${token}`, (req, res) => {
-  bot.processUpdate(req.body);
-  res.sendStatus(200);
-});
-
-// Ответ на /start
+// Команда /start
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
-  bot.sendMessage(chatId, 'Добро пожаловать в IceMind!');
+
+  bot.sendMessage(chatId, 'Привет! Ты в IceMind — хоккей с холодной головой 🧊\n\nВыбери действие:', {
+    reply_markup: {
+      keyboard: [
+        ['📜 Инструкция', '💳 Тарифы и подписка'],
+        ['🔐 Проверка VIP-доступа', '🛠 Связь с админом'],
+        ['📋 Правила канала']
+      ],
+      resize_keyboard: true,
+      one_time_keyboard: false
+    }
+  });
 });
 
-// Запуск сервера
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  bot.setWebHook(`https://icemind-bot-cloudtips.onrender.com/bot${token}`);
-  console.log(`Сервер запущен на порту ${PORT}`);
+// Обработка нажатий на кнопки
+bot.on('message', (msg) => {
+  const chatId = msg.chat.id;
+  const text = msg.text;
+
+  if (text === '📜 Инструкция') {
+    bot.sendMessage(chatId, '🔹 Инструкция по началу работы:\n1. Ознакомься с тарифами\n2. Оплати подписку\n3. Получи доступ в VIP\n\nЕсли что — жми "🛠 Связь с админом"');
+  }
+
+  else if (text === '💳 Тарифы и подписка') {
+    bot.sendMessage(chatId, '💰 Актуальные тарифы:\n▫️ 1 прогноз — 500 ₽\n▫️ Месяц — 3 000 ₽\n▫️ Сезон (9 мес) — 18 000 ₽');
+  }
+
+  else if (text === '🔐 Проверка VIP-доступа') {
+    bot.sendMessage(chatId, '🔎 Проверка доступа VIP: если ты оплатил подписку — доступ открыт. Если нет — перейди к оплате.');
+  }
+
+  else if (text === '🛠 Связь с админом') {
+    bot.sendMessage(chatId, '📩 Свяжись с админом: @Anton_9700');
+  }
+
+  else if (text === '📋 Правила канала') {
+    bot.sendMessage(chatId, '📜 Основные правила:\n— Только холодный расчёт, без лудомании\n— Соблюдай банк-менеджмент\n— Не нарушай правила чата\n— Относись с уважением к аналитике');
+  }
 });
