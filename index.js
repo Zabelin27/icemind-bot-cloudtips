@@ -1,7 +1,7 @@
 const TelegramBot = require('node-telegram-bot-api');
 
 // Вставь сюда свой токен бота
-const bot = new TelegramBot(token, { webHook: true });, { polling: true });
+const bot = new TelegramBot(token, { polling: true }); { polling: true });
 
 // Команда /start
 bot.onText(/\/start/, (msg) => {
