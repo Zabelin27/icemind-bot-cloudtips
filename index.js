@@ -4,12 +4,12 @@ const bodyParser = require('body-parser');
 const axios = require('axios');
 
 // === Настройки ===
-const BOT_TOKEN = '7642749455:AAGY8AWxrP0yhuc6Lprzs3j3Cp5QR1JRYRQ'; // ← Твой токен
+const BOT_TOKEN = '7642749455:AAGY8AWxrP0yhuc6Lprzs3j3Cp5QR1JRYRQ';
 const bot = new Telegraf(BOT_TOKEN);
 
-// === Обработка команды /start ===
+// === Команда /start ===
 bot.start((ctx) => {
-  ctx.reply('❄️ Добро пожаловать в IceMind! Выберите действие:', {
+  ctx.reply('Добро пожаловать в IceMind! Выберите действие:', {
     reply_markup: {
       inline_keyboard: [
         [{ text: 'Один прогноз — 500 ₽', url: 'https://pay.cloudtips.ru/p/e4170f25' }],
@@ -17,14 +17,16 @@ bot.start((ctx) => {
       ]
     }
   });
+
+  ctx.reply('🔒 Перед оплатой обязательно ознакомьтесь с условиями:\n\n📄 [Публичная оферта](https://spiffy-kulfi-edd385.netlify.app/oferta.html)\n🔐 [Политика конфиденциальности](https://spiffy-kulfi-edd385.netlify.app/politika.html)', {
+    parse_mode: 'Markdown'
+  });
 });
 
-// === Запуск бота и установка команд ===
+// === Удаляем лишние команды и оставляем только /start ===
 bot.launch()
   .then(() => {
     console.log('✅ Бот запущен');
-
-    // Удаление лишних команд, оставить только /start
     bot.telegram.setMyCommands([
       {
         command: 'start',
@@ -38,7 +40,6 @@ bot.launch()
 const app = express();
 app.use(bodyParser.json());
 
-// Проверка, что бот работает
 app.get('/', (req, res) => {
   res.send('✅ IceMind Bot работает!');
 });
@@ -51,13 +52,12 @@ app.post('/webhook', async (req, res) => {
 
   if (data && data.amount && data.customer_email) {
     const message = `💳 Оплата получена:\n\n👤 Email: ${data.customer_email}\n💸 Сумма: ${data.amount} ₽`;
-    await bot.telegram.sendMessage('@Anton_9700', message); // ← Админский логин
+    await bot.telegram.sendMessage('@Anton_9700', message);
   }
 
   res.sendStatus(200);
 });
 
-// === Запуск Express-сервера ===
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Сервер запущен на порту ${PORT}`);
