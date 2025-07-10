@@ -9,13 +9,26 @@ const bot = new Telegraf(BOT_TOKEN);
 
 // === Обработка команды /start ===
 bot.start((ctx) => {
-  ctx.reply('Добро пожаловать в IceMind! Выберите действие:', {
-    reply_markup: {
-      inline_keyboard: [
-        [{ text: 'Один прогноз — 500 ₽', url: 'https://pay.cloudtips.ru/p/e4170f25' }],
-        [{ text: 'Подписка на месяц — 3 000 ₽', url: 'https://pay.cloudtips.ru/p/4defa6ee' }]
-      ]
-    }
+  const welcomeText = `
+Привет! 👋 Это бот IceMind — здесь ты можешь приобрести доступ к VIP-прогнозам по хоккею 🏒
+
+❄️ Мы используем холодный расчёт, статистику и аналитический подход. Без лудомании, только разум и цифры.
+
+🔐 Перед оплатой обязательно ознакомься с условиями:
+
+📄 Оферта: https://spiffy-kulfi-edd385.netlify.app/oferta.html  
+📄 Политика конфиденциальности: https://spiffy-kulfi-edd385.netlify.app/politika.html
+`;
+
+  ctx.reply(welcomeText, { disable_web_page_preview: true }).then(() => {
+    ctx.reply('Выберите действие:', {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: 'Один прогноз — 500 ₽', url: 'https://pay.cloudtips.ru/p/e4170f25' }],
+          [{ text: 'Подписка на месяц — 3 000 ₽', url: 'https://pay.cloudtips.ru/p/4defa6ee' }]
+        ]
+      }
+    });
   });
 });
 
