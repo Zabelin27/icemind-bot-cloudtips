@@ -12,8 +12,8 @@ bot.start((ctx) => {
   ctx.reply('Добро пожаловать в IceMind! Выберите действие:', {
     reply_markup: {
       inline_keyboard: [
-        [{ text: 'Подписка на месяц — 3 000 ₽', url: 'https://pay.cloudtips.ru/p/4defa6ee' }],
-        [{ text: 'Один прогноз — 500 ₽', url: 'https://pay.cloudtips.ru/p/e4170f25' }]
+        [{ text: 'Один прогноз — 500 ₽', url: 'https://pay.cloudtips.ru/p/e4170f25' }],
+        [{ text: 'Подписка на месяц — 3 000 ₽', url: 'https://pay.cloudtips.ru/p/4defa6ee' }]
       ]
     }
   });
