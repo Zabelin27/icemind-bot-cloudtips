@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const axios = require('axios');
 
 // === Настройки ===
-const BOT_TOKEN = '7642749455:AAGY8AWxrP0yhuc6Lprzs3j3Cp5QR1JRYRQ'; // ← твой токен
+const BOT_TOKEN = '7642749455:AAGY8AWxrP0yhuc6Lprzs3j3Cp5QR1JRYRQ'; // ← Твой токен
 const bot = new Telegraf(BOT_TOKEN);
 
 // === Обработка команды /start ===
@@ -12,9 +12,8 @@ bot.start((ctx) => {
   ctx.reply('Добро пожаловать в IceMind! Выберите действие:', {
     reply_markup: {
       inline_keyboard: [
-        [{ text: 'Подписка на месяц — 3 000 ₽', url: 'https://pay.cloudtips.ru/p/xxxxxxxxxx' }],
-        [{ text: 'Сезонная подписка — 18 000 ₽', url: 'https://pay.cloudtips.ru/p/97054a9d' }],
-        [{ text: 'Один прогноз — 500 ₽', url: 'https://pay.cloudtips.ru/p/yyyyyyyyyy' }]
+        [{ text: 'Подписка на месяц — 3 000 ₽', url: 'https://pay.cloudtips.ru/p/4defa6ee' }],
+        [{ text: 'Один прогноз — 500 ₽', url: 'https://pay.cloudtips.ru/p/e4170f25' }]
       ]
     }
   });
@@ -25,7 +24,7 @@ bot.launch()
   .then(() => console.log('✅ Бот запущен'))
   .catch((err) => console.error('❌ Ошибка запуска бота:', err));
 
-// === Express-сервер для Render (чтобы бот не падал) ===
+// === Express-сервер для Render ===
 const app = express();
 app.use(bodyParser.json());
 
@@ -33,7 +32,7 @@ app.get('/', (req, res) => {
   res.send('✅ IceMind Bot работает!');
 });
 
-// === Обработка Webhook CloudTips ===
+// === Обработка Webhook от CloudTips ===
 app.post('/webhook', async (req, res) => {
   const data = req.body;
 
