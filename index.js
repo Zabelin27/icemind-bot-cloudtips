@@ -8,11 +8,11 @@ const bot = new Telegraf(BOT_TOKEN);
 
 // === Команда /start ===
 bot.start((ctx) => {
-  // Приветственное сообщение с условиями и ссылками на документы
+  // Приветствие и условия
   ctx.reply(
     '👋 Добро пожаловать в IceMind!\n\n' +
     '❄️ Мы — аналитический проект по хоккею. Забудь про эмоции и «чуйку». Только хладнокровная статистика и прозрачная отчётность.\n\n' +
-    '🔓 *Важно!* Проект IceMind берёт комиссию на себя — вам нужно оплатить только стоимость подписки.\n' +
+    '🔓 *Важно!* Проект IceMind берёт комиссию на себя — вы платите только за подписку.\n' +
     '👉 Уберите галочку «Возместить комиссию сервиса» перед оплатой.\n\n' +
     '📄 Условия:\n' +
     '📜 [Публичная оферта](https://spiffy-kulfi-edd385.netlify.app/oferta.html)\n' +
@@ -20,10 +20,10 @@ bot.start((ctx) => {
     { parse_mode: 'Markdown' }
   );
 
-  // Кнопки тарифов с зачёркнутыми старыми ценами
+  // Тарифы с креативной стрелкой
   ctx.reply(
-    '🔹 Один прогноз — ~~1000₽~~ 500₽\n' +
-    '🔹 Подписка на месяц — ~~5000₽~~ 3000₽',
+    '💎 Один прогноз — ~~1000₽~~ → *500₽*\n' +
+    '💼 Подписка на месяц — ~~5000₽~~ → *3000₽*',
     {
       parse_mode: 'Markdown',
       reply_markup: {
@@ -35,10 +35,10 @@ bot.start((ctx) => {
     }
   );
 
-  // Инструкция по присылке скрина чека
+  // Чёткая инструкция по чеку
   ctx.reply(
-    '✅ После оплаты пришлите скриншот чека или квитанции сюда или админу *@Anton_9700*.\n' +
-    '🤖 После проверки бот автоматически добавит вас в VIP-группу.',
+    '✅ После оплаты пришлите скриншот чека *только админу* — @Anton_9700.\n' +
+    '🤖 После его подтверждения бот автоматически добавит вас в VIP-группу.',
     { parse_mode: 'Markdown' }
   );
 });
@@ -52,29 +52,24 @@ bot.launch()
     ]);
   })
   .then(() => console.log('✅ Команда /start установлена'))
-  .catch((err) => console.error('❌ Ошибка запуска бота:', err));
+  .catch((err) => console.error('❌ Ошибка запуска:', err));
 
-// === Express-сервер для Render и Webhook от CloudTips ===
+// === Express-сервер и Webhook от CloudTips ===
 const app = express();
 app.use(bodyParser.json());
 
-app.get('/', (req, res) => {
-  res.send('✅ IceMind Bot работает!');
-});
+app.get('/', (req, res) => res.send('✅ IceMind Bot работает!'));
 
 app.post('/webhook', async (req, res) => {
   const data = req.body;
   console.log('💰 Webhook:', data);
-
   if (data && data.amount && data.customer_email) {
-    // Уведомление админу о платеже
     await bot.telegram.sendMessage(
       '@Anton_9700',
       `💳 *Оплата получена!*\n\n👤 Email: ${data.customer_email}\n💸 Сумма: ${data.amount} ₽`,
       { parse_mode: 'Markdown' }
     );
   }
-
   res.sendStatus(200);
 });
 
