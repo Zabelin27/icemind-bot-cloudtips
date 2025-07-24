@@ -1,14 +1,14 @@
+require('dotenv').config();
 const { Telegraf } = require('telegraf');
 const express = require('express');
 const bodyParser = require('body-parser');
 
-// Токен бота
-const BOT_TOKEN = '7642749455:AAGY8AWxrP0yhuc6Lprzs3j3Cp5QR1JRYRQ';
-const bot = new Telegraf(BOT_TOKEN);
+const bot = new Telegraf(process.env.BOT_TOKEN);
 
 // /start
 bot.start((ctx) => {
-  // 1) Приветствие, условия, чек админу и ссылки
+  if (ctx.message.chat.type !== 'private') return;
+
   ctx.reply(
     '👋 Добро пожаловать в IceMind!\n' +
     'Мы — аналитический проект по хоккею.\n' +
@@ -22,7 +22,6 @@ bot.start((ctx) => {
     '• Политика конфиденциальности: https://spiffy-kulfi-edd385.netlify.app/politika.html'
   );
 
-  // 2) Тарифы + кнопки оплаты
   ctx.reply(
     '💎 Тарифы:\n' +
     '• Один прогноз — 500 ₽ (вместо 1000 ₽)\n' +
@@ -36,6 +35,21 @@ bot.start((ctx) => {
         ]
       }
     }
+  );
+});
+
+// /help
+bot.command('help', (ctx) => {
+  if (ctx.message.chat.type !== 'private') return;
+
+  ctx.reply(
+    '🧊 Проект IceMind\n' +
+    '— аналитика и ставки на хоккей с холодной головой.\n\n' +
+    '💳 Оплата:\n' +
+    '• Один прогноз — 500 ₽: https://pay.cloudtips.ru/p/e4170f25\n' +
+    '• Месяц — 3 000 ₽: https://pay.cloudtips.ru/p/4defa6ee\n\n' +
+    '📌 После оплаты — чек администратору: @Anton_9700\n' +
+    '📄 Условия: https://spiffy-kulfi-edd385.netlify.app/oferta.html'
   );
 });
 
