@@ -1,10 +1,13 @@
 import TelegramBot from 'node-telegram-bot-api';
 import dotenv from 'dotenv';
+import express from 'express';
 
 dotenv.config();
 
+// Инициализация бота
 const bot = new TelegramBot(process.env.TELEGRAM_TOKEN, { polling: true });
 
+// Ответ на /start
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
 
@@ -37,4 +40,17 @@ bot.onText(/\/start/, (msg) => {
 
   bot.sendMessage(chatId, message);
 });
+
+// Мини-сервер для Render (чтобы не таймаутило)
+const app = express();
+const PORT = process.env.PORT || 10000;
+
+app.get('/', (req, res) => {
+  res.send('Bot is running.');
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+
 
