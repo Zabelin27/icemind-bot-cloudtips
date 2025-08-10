@@ -1,132 +1,58 @@
-const TelegramBot = require('node-telegram-bot-api');
-const express = require('express');
-const axios = require('axios');
+import TelegramBot from 'node-telegram-bot-api';
+import dotenv from 'dotenv';
+import express from 'express';
 
-const token = '7642749455:AAGY8AWxrP0yhuc6Lprzs3j3Cp5QR1JRYRQ';
-const bot = new TelegramBot(token, { polling: true });
+dotenv.config();
 
-const ADMIN_ID = 536582003; // твой Telegram ID
-const VIP_CHAT_ID = -1005706679786; // ID VIP-группы
-const PAYMENTS = {
-  daily: { amount: 500, duration: 1, name: "Один прогноз" },
-  monthly: { amount: 3000, duration: 30, name: "Подписка на месяц" },
-  season: { amount: 18000, duration: 270, name: "Подписка на сезон (9 месяцев)" }
-};
+// Инициализация бота
+const bot = new TelegramBot(process.env.TELEGRAM_TOKEN, { polling: true });
 
-const activeUsers = new Map();
-
-const app = express();
-const PORT = process.env.PORT || 10000;
-app.get('/', (_, res) => res.send('Бот работает'));
-app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
-
-// Старт
+// Ответ на /start
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
-  const text = `
-👋 Приветствуем в *IceMind* — аналитика с холодной головой 🧊
 
-🎯 Что доступно:
-• Один прогноз — 500 ₽
-• Подписка на месяц — 3 000 ₽
-• Подписка на сезон (9 месяцев) — 18 000 ₽
+  const message = `
+Добро пожаловать в IceMind! 🧊
 
-📌 Без лудомании. Только расчёт и аналитика.
+Здесь ты получаешь:
+• Прогнозы на хоккей с холодной головой
+• Аналитику без лудомании
+• Прозрачную статистику и поддержку
 
-👇 Выбери нужный тариф:
-`;
+📊 Выбери тариф:
+🔻 ОДИН ПРОГНОЗ — 500 ₽
+🔷 ПОДПИСКА НА МЕСЯЦ — 3 000 ₽
 
-  const options = {
-    parse_mode: 'Markdown',
-    reply_markup: {
-      inline_keyboard: [
-        [{ text: '📄 Один прогноз — 500 ₽', callback_data: 'buy_daily' }],
-        [{ text: '📆 Месяц — 3 000 ₽', callback_data: 'buy_monthly' }],
-        [{ text: '🎯 Сезон — 18 000 ₽', callback_data: 'buy_season' }]
-      ]
-    }
-  };
+‼️ ПЕРЕД ОПЛАТОЙ УБЕРИ ГАЛОЧКУ «ВОЗМЕСТИТЬ КОМИССИЮ СЕРВИСА»
+📌 ПРОЕКТ БЕРЁТ КОМИССИЮ НА СЕБЯ — ты платишь только за подписку, без переплат!
 
-  bot.sendMessage(chatId, text, options);
-});
+🔗 ССЫЛКИ НА ОПЛАТУ:
+• ОДИН ПРОГНОЗ: https://pay.cloudtips.ru/p/e4170f25  
+• ПОДПИСКА НА МЕСЯЦ: https://pay.cloudtips.ru/p/4defa6ee
 
-// Обработка кнопок
-bot.on('callback_query', async (query) => {
-  const chatId = query.message.chat.id;
-  const username = query.from.username || 'Без ника';
+📩 После оплаты отправь чек администратору — @Anton_9700  
+Он вручную добавит тебя в VIP-группу.
 
-  const type = query.data.replace('buy_', '');
-  const pay = PAYMENTS[type];
+📄 Документы:
+• Полная оферта: https://spiffy-kulfi-edd385.netlify.app/oferta.html  
+• Полная политика конфиденциальности: https://spiffy-kulfi-edd385.netlify.app/politika.html
+  `;
 
-  const links = {
-    daily: 'https://pay.cloudtips.ru/p/e4170f25',
-    monthly: 'https://pay.cloudtips.ru/p/4defa6ee',
-    season: 'https://pay.cloudtips.ru/p/97054a9d'
-  };
-
-  await bot.sendPhoto(chatId, 'https://telegra.ph/file/e39df060a25c276cc34b8.jpg', {
-    caption: `⚠️ Перед оплатой убери галочку *"Возместить комиссию сервиса"* — проект берёт её на себя.
-
-💳 *${pay.name}* — ${pay.amount} ₽
-
-После оплаты тебе автоматически откроется доступ.`,
-    parse_mode: 'Markdown',
-    reply_markup: {
-      inline_keyboard: [
-        [{ text: '🔗 Перейти к оплате', url: links[type] }]
-      ]
-    }
+  bot.sendMessage(chatId, message, {
+    parse_mode: 'HTML',
+    disable_web_page_preview: true,
   });
-
-  bot.answerCallbackQuery(query.id);
 });
 
-// Приём уведомлений от CloudTips (симуляция)
-app.post('/notify', express.json(), async (req, res) => {
-  const { amount, username, tg_id } = req.body;
-  const chatId = parseInt(tg_id);
+// Express-сервер для Render
+const app = express();
+const PORT = process.env.PORT || 10000;
 
-  let matchedType = null;
-  for (const key in PAYMENTS) {
-    if (PAYMENTS[key].amount === amount) {
-      matchedType = key;
-      break;
-    }
-  }
-
-  if (!matchedType) return res.status(400).send('Unknown payment');
-
-  const accessTime = PAYMENTS[matchedType].duration;
-  const planName = PAYMENTS[matchedType].name;
-
-  try {
-    await bot.sendMessage(chatId, `✅ Оплата за *${planName}* получена!\nТебе открыт доступ в VIP.`);
-    await bot.sendMessage(ADMIN_ID, `💸 *Оплата:* ${amount} ₽\n👤 @${username || 'Без ника'}\n🕐 ${planName}`);
-    await bot.sendMessage(VIP_CHAT_ID, `👤 @${username || 'Без ника'} присоединился к VIP!`);
-
-    await bot.sendMessage(chatId, `🔐 Вход в VIP: https://t.me/+pJs7l-ZYOHVhNmJi`);
-    await bot.sendMessage(VIP_CHAT_ID, `/addvip ${chatId}`);
-
-    await bot.addChatMember(VIP_CHAT_ID, chatId);
-    activeUsers.set(chatId, Date.now() + accessTime * 24 * 60 * 60 * 1000);
-
-    // Удаление по таймеру
-    setTimeout(async () => {
-      try {
-        await bot.sendMessage(chatId, '⏳ Срок действия подписки завершён.');
-        await bot.kickChatMember(VIP_CHAT_ID, chatId);
-        await bot.sendMessage(ADMIN_ID, `🚫 Пользователь @${username} удалён из VIP`);
-        activeUsers.delete(chatId);
-      } catch (err) {
-        console.error('Ошибка при удалении:', err.message);
-      }
-    }, accessTime * 24 * 60 * 60 * 1000);
-
-    res.status(200).send('OK');
-  } catch (err) {
-    console.error('Ошибка при доступе:', err.message);
-    res.status(500).send('Error');
-  }
+app.get('/', (req, res) => {
+  res.send('IceMind бот работает!');
 });
 
+app.listen(PORT, () => {
+  console.log(`Сервер запущен на порту ${PORT}`);
+});
 
