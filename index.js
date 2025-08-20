@@ -23,7 +23,7 @@ bot.onText(/\/start/, (msg) => {
 🔻 ОДИН ПРОГНОЗ — 500 ₽
 🔷 ПОДПИСКА НА МЕСЯЦ — 3 000 ₽
 
-🔗 ССЫЛКИ НА ОПЛАТУ (YooMoney):
+🔗 ССЫЛКИ НА ОПЛАТУ:
 • ОДИН ПРОГНОЗ: https://yoomoney.ru/fundraise/1C8DL945HRQ.250820
 • ПОДПИСКА НА МЕСЯЦ: https://yoomoney.ru/fundraise/1C8DMGFUH1N.250820
 
@@ -41,11 +41,11 @@ bot.onText(/\/start/, (msg) => {
   });
 });
 
-// Express-сервер для Render
+// Express-сервер для Render (healthcheck)
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   res.send('IceMind бот работает!');
 });
 
