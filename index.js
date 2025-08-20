@@ -1,49 +1,59 @@
-const TelegramBot = require("node-telegram-bot-api");
+import TelegramBot from "node-telegram-bot-api";
+import dotenv from "dotenv";
+import express from "express";
 
-// === ТВОЙ ТОКЕН БОТА ===
-const token = "7642749455:AAGY8AWxrP0yhuc6Lprzs3j3Cp5QR1JRYRQ";
-const bot = new TelegramBot(token, { polling: true });
+dotenv.config();
 
-// === ID VIP-группы ===
-const vipGroupId = -1005706679786;
+// Инициализация бота
+const bot = new TelegramBot(process.env.TELEGRAM_TOKEN, { polling: true });
 
-// === ССЫЛКИ НА ОПЛАТУ ЮMoney ===
-const oneForecastLink = "https://yoomoney.ru/to/4100118622589732/500"; // 500 ₽
-const monthVipLink = "https://yoomoney.ru/to/4100118622589732/3000";  // 3000 ₽
-
-// === СТАРТ ===
+// Ответ на /start
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
 
   const message = `
-Добро пожаловать в <b>IceMind</b> 🧊
+Добро пожаловать в <b>IceMind</b>! 🧊
 
-Здесь ты получишь доступ к аналитическим прогнозам по хоккею без лудомании и лишних эмоций.
+Здесь ты получаешь:
+• Прогнозы на хоккей с холодной головой  
+• Аналитику без лудомании  
+• Прозрачную статистику и поддержку 📊  
 
-⚠️ При переходе по ссылке вы увидите кнопку <b>«Отправить»</b> и заголовок 
-<b>«Сбор денег на IT-проект»</b>.  
-Не обращайте внимания — это особенности ЮMoney.  
-Просто нажмите <b>«Отправить»</b> → введите сумму (она уже зафиксирована) → оплатите.
+<b>Выбери тариф:</b>  
+🔻 <b>ОДИН ПРОГНОЗ — 500 ₽</b>  
+🔷 <b>ПОДПИСКА НА МЕСЯЦ — 3 000 ₽</b>  
 
-<b>Тарифы:</b>
-- 🔹 <b>Подписка на 1 прогноз</b> — 500 ₽
-- 🔹 <b>Подписка на VIP месяц</b> — 3000 ₽
+⚠️ <b>ВАЖНО:</b>  
+При переходе по ссылке вы увидите кнопку «Отправить» и заголовок «Сбор денег на IT-проект».  
+<b>Не обращайте внимания</b> — это особенности ЮMoney.  
+Просто нажмите «Отправить» → введите сумму (она уже зафиксирована) → оплатите.  
 
-👇 Выберите подходящий вариант:
+🔗 <b>ССЫЛКИ НА ОПЛАТУ:</b>  
+• ОДИН ПРОГНОЗ: https://yoomoney.ru/fundraise/payment/odinprognoz  
+• ПОДПИСКА НА МЕСЯЦ: https://yoomoney.ru/fundraise/payment/vipmesyac  
+
+📩 После оплаты отправь чек администратору — @Anton_9700  
+Он вручную добавит тебя в VIP-группу.  
+
+📄 Документы:  
+• Полная оферта: https://spiffy-kulfi-edd385.netlify.app/oferta.html  
+• Полная политика конфиденциальности: https://spiffy-kulfi-edd385.netlify.app/politika.html  
   `;
 
-  const options = {
+  bot.sendMessage(chatId, message, {
     parse_mode: "HTML",
-    reply_markup: {
-      inline_keyboard: [
-        [{ text: "🔮 Подписка на 1 прогноз — 500 ₽", url: oneForecastLink }],
-        [{ text: "🔥 Подписка на VIP месяц — 3000 ₽", url: monthVipLink }],
-      ],
-    },
-  };
-
-  bot.sendMessage(chatId, message, options);
+    disable_web_page_preview: true,
+  });
 });
 
-// === ЛОГИРОВАНИЕ ОПЛАТ (вручную добавлять в будущем) ===
-// Здесь можно будет сделать проверку по API ЮMoney, если нужно автоматизировать
+// Express-сервер для Render
+const app = express();
+const PORT = process.env.PORT || 10000;
+
+app.get("/", (req, res) => {
+  res.send("IceMind бот работает!");
+});
+
+app.listen(PORT, () => {
+  console.log(`Сервер запущен на порту ${PORT}`);
+});
