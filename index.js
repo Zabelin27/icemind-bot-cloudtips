@@ -1,3 +1,13 @@
+import TelegramBot from 'node-telegram-bot-api';
+import dotenv from 'dotenv';
+import express from 'express';
+
+dotenv.config();
+
+// Инициализация бота (polling)
+const bot = new TelegramBot(process.env.TELEGRAM_TOKEN, { polling: true });
+
+// /start
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
 
@@ -32,5 +42,18 @@ bot.onText(/\/start/, (msg) => {
     disable_web_page_preview: true,
   });
 });
+
+// Мини-сервер для Render
+const app = express();
+const PORT = process.env.PORT || 10000;
+
+app.get('/', (_req, res) => {
+  res.send('IceMind бот работает!');
+});
+
+app.listen(PORT, () => {
+  console.log(`Сервер запущен на порту ${PORT}`);
+});
+
 
 
