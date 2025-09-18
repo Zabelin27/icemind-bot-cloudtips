@@ -40,11 +40,23 @@ bot.onText(/\/start/, (msg) => {
           { text: "Оплатить 3 000 ₽", url: "https://yoomoney.ru/fundraise/1C8DMGFUH1N.250820" }
         ],
         [
-          { text: "Связаться с админом", url: "https://t.me/Anton_9700" }
+          { text: "Связаться с админом", callback_data: "contact_admin" }
         ]
       ]
     }
   });
+});
+
+// Обработка нажатия кнопки «Связаться с админом»
+bot.on("callback_query", (query) => {
+  const chatId = query.message.chat.id;
+
+  if (query.data === "contact_admin") {
+    bot.sendMessage(
+      chatId,
+      "📩 После оплаты отправь чек админу 👉 @Anton_9700\n\nОн вручную добавит тебя в VIP-группу уже сегодня 🚀"
+    );
+  }
 });
 
 // Мини-сервер для Render
