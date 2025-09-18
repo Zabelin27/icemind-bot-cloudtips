@@ -25,10 +25,6 @@ bot.onText(/\/start/, (msg) => {
 
 ⚠️ При оплате будет заголовок <b>«офисные нужды»</b> — это нормально, просто жми «Перевести» ✅  
 
-🔗 <b>ССЫЛКИ ДЛЯ ОПЛАТЫ:</b>  
-👉 <a href="https://yoomoney.ru/fundraise/1C8DL945HRQ.250820">Оплатить 500 ₽</a>  
-👉 <a href="https://yoomoney.ru/fundraise/1C8DMGFUH1N.250820">Оплатить 3 000 ₽</a>  
-
 📩 После оплаты отправь чек админу — <b>@Anton_9700</b>  
 Он вручную добавит тебя в VIP-группу уже сегодня 🚀  
 
@@ -40,6 +36,14 @@ bot.onText(/\/start/, (msg) => {
   bot.sendMessage(chatId, message, {
     parse_mode: 'HTML',
     disable_web_page_preview: true,
+    reply_markup: {
+      inline_keyboard: [
+        [
+          { text: "Оплатить 500 ₽", url: "https://yoomoney.ru/fundraise/1C8DL945HRQ.250820" },
+          { text: "Оплатить 3 000 ₽", url: "https://yoomoney.ru/fundraise/1C8DMGFUH1N.250820" }
+        ]
+      ]
+    }
   });
 });
 
@@ -54,6 +58,3 @@ app.get('/', (_req, res) => {
 app.listen(PORT, () => {
   console.log(`Сервер запущен на порту ${PORT}`);
 });
-
-
-
