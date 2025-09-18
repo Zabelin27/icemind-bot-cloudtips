@@ -1,42 +1,28 @@
-// index.js — финальная версия с инструкцией «офисные нужды»
-import TelegramBot from 'node-telegram-bot-api';
-import dotenv from 'dotenv';
-import express from 'express';
-
-dotenv.config();
-
-// Инициализация бота (polling)
-const bot = new TelegramBot(process.env.TELEGRAM_TOKEN, { polling: true });
-
-// /start
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
 
   const message = `
-Добро пожаловать в <b>IceMind</b>! 🧊
+🧊 <b>Добро пожаловать в IceMind!</b>  
 
-Здесь ты получаешь:
-• Прогнозы на хоккей с холодной головой  
-• Аналитику без лудомании  
-• Прозрачную статистику и поддержку 📊  
+Здесь ты получаешь:  
+✅ Прогнозы на хоккей с холодной головой  
+✅ Аналитику без лудомании  
+✅ Прозрачную статистику и поддержку 📊  
 
-<b>Выбери тариф:</b>  
-🔻 <b>ОДИН ПРОГНОЗ — 500 ₽</b>  
-🔷 <b>ПОДПИСКА НА МЕСЯЦ (VIP) — 3 000 ₽</b>  
+🔻 <b>Выбери тариф:</b>  
+• Один прогноз — 500 ₽  
+• VIP-подписка на месяц — 3 000 ₽  
 
-⚠️ ВАЖНО: при переходе на страницу оплаты вы можете увидеть заголовок:
-«Сбор денег на офисные нужды».  
-Это <b>особенность платёжной системы</b>.  
-Просто нажмите «Перевести» → оплатите. ✅  
+⚠️ При оплате будет заголовок <b>«офисные нужды»</b> — это нормально, просто жми «Перевести» ✅  
 
-🔗 <b>ССЫЛКИ НА ОПЛАТУ:</b>  
-• ОДИН ПРОГНОЗ: <a href="https://yoomoney.ru/fundraise/1C8DL945HRQ.250820">Оплатить 500 ₽</a>  
-• ПОДПИСКА НА МЕСЯЦ: <a href="https://yoomoney.ru/fundraise/1C8DMGFUH1N.250820">Оплатить 3 000 ₽</a>
+🔗 <b>ССЫЛКИ ДЛЯ ОПЛАТЫ:</b>  
+👉 <a href="https://yoomoney.ru/fundraise/1C8DL945HRQ.250820">Оплатить 500 ₽</a>  
+👉 <a href="https://yoomoney.ru/fundraise/1C8DMGFUH1N.250820">Оплатить 3 000 ₽</a>  
 
-📩 После оплаты отправь чек администратору — @Anton_9700  
-Он вручную добавит тебя в VIP‑группу.
+📩 После оплаты отправь чек админу — <b>@Anton_9700</b>  
+Он вручную добавит тебя в VIP-группу уже сегодня 🚀  
 
-📄 Документы:  
+📄 <b>Документы:</b>  
 • <a href="https://spiffy-kulfi-edd385.netlify.app/oferta.html">Полная оферта</a>  
 • <a href="https://spiffy-kulfi-edd385.netlify.app/policy.html">Политика конфиденциальности</a>
 `;
@@ -47,14 +33,4 @@ bot.onText(/\/start/, (msg) => {
   });
 });
 
-// Мини‑сервер для Render
-const app = express();
-const PORT = process.env.PORT || 10000;
 
-app.get('/', (_req, res) => {
-  res.send('IceMind бот работает!');
-});
-
-app.listen(PORT, () => {
-  console.log(`Сервер запущен на порту ${PORT}`);
-});
