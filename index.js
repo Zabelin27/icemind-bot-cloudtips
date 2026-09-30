@@ -36,8 +36,8 @@ bot.onText(/\/start/, (msg) => {
     reply_markup: {
       inline_keyboard: [
         [
-          { text: "Оплатить 500 ₽", url: "https://yoomoney.ru/fundraise/1C8DL945HRQ.250820" },
-          { text: "Оплатить 3 000 ₽", url: "https://yoomoney.ru/fundraise/1C8DMGFUH1N.250820" }
+          { text: "Оплатить 500 ₽", url: "https://yoomoney.ru/fundraise/1KK4EIARQL5.260930" },
+          { text: "Оплатить 3 000 ₽", url: "https://yoomoney.ru/fundraise/1KK4E92J40T.260930" }
         ],
         [
           { text: "Связаться с админом", callback_data: "contact_admin" }
